@@ -15,18 +15,19 @@ BlueprintColumn = _Class:Create("BlueprintColumn", nil, {
 })
 
 --- Constructor for the BlueprintColumn class.
---- @param options table Raw JSON configuration for this column block
+--- @param options table
+--- @return BlueprintColumn
 function BlueprintColumn:New(options)
+    ---@type BlueprintColumn
     local self = setmetatable({}, BlueprintColumn)
-    
-    -- Ingest identifying parameters or auto-generate fallback bounds tracking
-    self.ColumnId = options.ColumnId or ("col_" .. Ext.Utils.GenerateRandomString(8))
-    self.VisibleIf = options.VisibleIf or ""
-    self.Handles = options.Handles or {}
+    self.ColumnId = options.ColumnId or ""
+    self.ColumnName = options.ColumnName or ""
+    self.ColumnnDescription = options.ColumnDescription or ""
+    self.Options = options.Options or {}
     self.Settings = {}
+    self.Handles = options.Handles
 
-    -- Process settings nested inside this specific backend column group
-    if options.Settings and type(options.Settings) == "table" then
+     if options.Settings then
         for _, settingOptions in ipairs(options.Settings) do
             local setting = BlueprintSetting:New(settingOptions)
             table.insert(self.Settings, setting)
@@ -35,6 +36,7 @@ function BlueprintColumn:New(options)
 
     return self
 end
+
 
 --- Get the unique identifier of this Column block
 --- @return string
