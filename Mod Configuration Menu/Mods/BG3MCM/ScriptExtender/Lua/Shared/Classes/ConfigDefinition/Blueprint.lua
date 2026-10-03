@@ -16,6 +16,7 @@ KeybindingSortMode.DEFAULT = KeybindingSortMode.BLUEPRINT
 ---@field private ModName? string
 ---@field private ModDescription? string
 ---@field private Tabs? BlueprintTab[]
+---@field private Columns? BlueprintColumn[]
 ---@field private Settings? BlueprintSetting[]
 ---@field private Sections? BlueprintSection[]
 ---@field private Handles? table
@@ -28,6 +29,7 @@ Blueprint = _Class:Create("Blueprint", nil, {
     Optional = false,
     Tabs = {},
     Sections = {},
+    Columns = {},
     Settings = {},
     Handles = {},
     KeybindingSortMode = KeybindingSortMode.DEFAULT
@@ -102,6 +104,12 @@ function Blueprint:SetTabs(value)
     BlueprintShape:InvalidateCache()
 end
 
+--- Returns the columns of the blueprint, if any.
+---@return BlueprintColumn[] columns The columns of the blueprint
+function Blueprint:GetColumns()
+    return self.Columns
+end
+
 --- Returns the settings of the blueprint, if any.
 ---@return BlueprintSetting[] settings The settings of the blueprint
 function Blueprint:GetSettings()
@@ -116,6 +124,11 @@ end
 
 function Blueprint:SetSections(value)
     self.Sections = value
+    BlueprintShape:InvalidateCache()
+end
+
+function Blueprint:SetColumns(value)
+    self.Columns = value
     BlueprintShape:InvalidateCache()
 end
 
@@ -140,12 +153,21 @@ function Blueprint:New(options)
     self.KeybindingSortMode = options.KeybindingSortMode or KeybindingSortMode.DEFAULT
     self.Tabs = {}
     self.Sections = {}
+    self.Columns = {}
     self.Settings = {}
 
     if options.Tabs then
         for _, tabOptions in ipairs(options.Tabs) do
             local tab = BlueprintTab:New(tabOptions)
             table.insert(self.Tabs, tab)
+        end
+    end
+    
+    if options.Columns then
+        self.Columns = {}
+        for _, columnOptions in ipairs(options.Columns) do
+            local column = BlueprintColumn:New(columnOptions)
+            table.insert(self.Columns, column)
         end
     end
 
