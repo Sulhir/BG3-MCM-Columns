@@ -74,3 +74,27 @@ end
 function BlueprintColumn:GetHandles()
     return self.Handles
 end
+function BlueprintColumn:SetColumnDescription(value)
+    self.ColumnDescription = value
+end
+
+---@param name string
+---@param type string
+---@param default MCMSettingValue
+---@param description string
+---@param options? table<string, unknown>
+---@param columnName? string
+---@return BlueprintColumn
+function BlueprintColumn:AddSetting(name, type, default, description, options, columnnName)
+    local setting = BlueprintSetting:New({
+        Name = name,
+        Type = type,
+        Default = default,
+        Description = description,
+        BlueprintColumn = columnName or self.ColumnName,
+        Options = options or {}
+    })
+    table.insert(self.Settings, setting)
+    BlueprintShape:InvalidateCache()
+    return self
+end
