@@ -5,7 +5,7 @@
 ---@field private VisibleIf VisibleIfDefinition
 ---@field private Options table
 ---@field private Settings BlueprintSetting[]
----@field private Columns BlueprintColumn[]
+---@field private Columns? BlueprintColumn[]
 ---@field private Handles? table
 BlueprintSection = _Class:Create("BlueprintSection", nil, {
     SectionName = "",
@@ -14,8 +14,8 @@ BlueprintSection = _Class:Create("BlueprintSection", nil, {
     VisibleIf = "",
     Options = {},
     Tabs = {},
-    Settings = {},
     Columns = {},
+    Settings = {},
     Handles = {}
 })
 
@@ -31,8 +31,8 @@ function BlueprintSection:New(options)
     self.VisibleIf = options.VisibleIf or ""
     self.Options = options.Options or {}
     self.Tabs = {}
-    self.Settings = {}
     self.Columns = {}
+    self.Settings = {}
     self.Handles = options.Handles
 
     if options.Tabs then
@@ -41,18 +41,18 @@ function BlueprintSection:New(options)
             table.insert(self.Tabs, tab)
         end
     end
-
-    if options.Settings then
-        for _, settingOptions in ipairs(options.Settings) do
-            local setting = BlueprintSetting:New(settingOptions)
-            table.insert(self.Settings, setting)
-        end
-    end
     
     if options.Columns then
         for _, columnOptions in ipairs(options.Columns) do
             local column = BlueprintColumn:New(columnOptions)
             table.insert(self.Columns, column)
+        end
+    end
+
+    if options.Settings then
+        for _, settingOptions in ipairs(options.Settings) do
+            local setting = BlueprintSetting:New(settingOptions)
+            table.insert(self.Settings, setting)
         end
     end
 
@@ -92,6 +92,12 @@ function BlueprintSection:GetTabs()
     return self.Tabs
 end
 
+---Get the columns inside this section.
+---@return BlueprintColumn[]
+function BlueprintSection:GetColumns()
+    return self.Columns
+end
+
 function BlueprintSection:GetSettings()
     return self.Settings
 end
@@ -102,12 +108,6 @@ end
 
 function BlueprintSection:GetOptions()
     return self.Options
-end
-
----Get the columns inside this section.
----@return BlueprintColumn[]
-function BlueprintSection:GetColumns()
-    return self.Columns
 end
 
 function BlueprintSection:GetHandles()
