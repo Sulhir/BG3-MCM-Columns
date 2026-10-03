@@ -22,7 +22,7 @@ function BlueprintColumn:New(options)
     local self = setmetatable({}, BlueprintColumn)
     self.ColumnId = options.ColumnId or ""
     self.ColumnName = options.ColumnName or ""
-    self.ColumnnDescription = options.ColumnDescription or ""
+    self.ColumnDescription = options.ColumnDescription or ""
     self.Options = options.Options or {}
     self.Settings = {}
     self.Handles = options.Handles
