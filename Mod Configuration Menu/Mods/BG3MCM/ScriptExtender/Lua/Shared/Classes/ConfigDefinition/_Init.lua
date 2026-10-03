@@ -4,8 +4,8 @@
 
 RequireFiles("Shared/Classes/ConfigDefinition/", {
     "Setting",
-    "Section",
     "Column",
+    "Section",
     "Tab",
     "Blueprint",
 })
