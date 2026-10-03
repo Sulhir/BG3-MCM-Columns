@@ -1,12 +1,16 @@
 ---@class BlueprintColumn
+---@field private ColumnName string
 ---@field private ColumnId string
+---@field private ColumnDescription string
+---@field private Options table
 ---@field private Settings BlueprintSetting[]
----@field private VisibleIf VisibleIfDefinition
----@field private Handles table
+---@field private Handles? table
 BlueprintColumn = _Class:Create("BlueprintColumn", nil, {
+    ColumnName = "",
     ColumnId = "",
+    ColumnDescription = "",
+    Options = {},
     Settings = {},
-    VisibleIf = "",
     Handles = {}
 })
 
