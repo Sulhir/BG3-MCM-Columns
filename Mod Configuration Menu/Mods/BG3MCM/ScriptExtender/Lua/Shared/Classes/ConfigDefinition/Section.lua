@@ -5,6 +5,7 @@
 ---@field private VisibleIf VisibleIfDefinition
 ---@field private Options table
 ---@field private Settings BlueprintSetting[]
+---@field private Columns BlueprintColumn[]
 ---@field private Handles? table
 BlueprintSection = _Class:Create("BlueprintSection", nil, {
     SectionName = "",
@@ -14,12 +15,13 @@ BlueprintSection = _Class:Create("BlueprintSection", nil, {
     Options = {},
     Tabs = {},
     Settings = {},
+    Columns = {},
     Handles = {}
 })
 
---- Constructor for the BlueprintSection class.
---- @param options table
---- @return BlueprintSection
+---Constructor for the BlueprintSection class.
+---@param options table
+---@return BlueprintSection
 function BlueprintSection:New(options)
     ---@type BlueprintSection
     local self = setmetatable({}, BlueprintSection)
@@ -30,6 +32,7 @@ function BlueprintSection:New(options)
     self.Options = options.Options or {}
     self.Tabs = {}
     self.Settings = {}
+    self.Columns = {}
     self.Handles = options.Handles
 
     if options.Tabs then
@@ -43,6 +46,13 @@ function BlueprintSection:New(options)
         for _, settingOptions in ipairs(options.Settings) do
             local setting = BlueprintSetting:New(settingOptions)
             table.insert(self.Settings, setting)
+        end
+    end
+    
+    if options.Columns then
+        for _, columnOptions in ipairs(options.Columns) do
+            local column = BlueprintColumn:New(columnOptions)
+            table.insert(self.Columns, column)
         end
     end
 
@@ -76,8 +86,8 @@ function BlueprintSection:GetVisibleIf()
     return self.VisibleIf
 end
 
---- Get nested tabs of the BlueprintSection.
---- @return BlueprintTab[]
+---Get nested tabs of the BlueprintSection.
+---@return BlueprintTab[]
 function BlueprintSection:GetTabs()
     return self.Tabs
 end
@@ -92,6 +102,12 @@ end
 
 function BlueprintSection:GetOptions()
     return self.Options
+end
+
+---Get the columns inside this section.
+---@return BlueprintColumn[]
+function BlueprintSection:GetColumns()
+    return self.Columns
 end
 
 function BlueprintSection:GetHandles()
@@ -119,6 +135,21 @@ function BlueprintSection:AddSetting(name, type, default, description, options, 
         Options = options or {}
     })
     table.insert(self.Settings, setting)
+    BlueprintShape:InvalidateCache()
+    return self
+end
+
+---@param columnName? string
+---@param columnDescription? string
+---@param options? table<string, unknown>
+---@return BlueprintSection
+function BlueprintSection:AddColumn(columnName, columnDescription, options)
+    local column = BlueprintColumn:New({
+        ColumnName = columnName,
+        ColumnDescription = columnDescription or "",
+        Options = options or {}
+    })
+    table.insert(self.Columns, column)
     BlueprintShape:InvalidateCache()
     return self
 end
