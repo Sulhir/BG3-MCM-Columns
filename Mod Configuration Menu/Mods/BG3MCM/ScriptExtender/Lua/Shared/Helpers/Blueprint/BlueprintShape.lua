@@ -70,6 +70,20 @@ function BlueprintShape:GetSections(element)
 end
 
 ---@param element any
+---@return BlueprintColumn[]
+function BlueprintShape:GetColumns(element)
+    if not element then
+        return {}
+    end
+
+    if element.GetColumns then
+        return element:GetColumns() or {}
+    end
+
+    return element.Columns or {}
+end
+    
+---@param element any
 ---@return BlueprintSetting[]
 function BlueprintShape:GetSettings(element)
     if not element then
@@ -143,6 +157,9 @@ function BlueprintShape:ForEachSection(blueprint, callback)
     visitElement(blueprint)
 end
 
+    visitElement(blueprint)
+end
+
 ---@param blueprint Blueprint|BlueprintTab|BlueprintSection
 ---@return BlueprintCacheIndex
 function BlueprintShape:_BuildIndex(blueprint)
@@ -153,7 +170,7 @@ function BlueprintShape:_BuildIndex(blueprint)
         hasAnySettings = false,
     }
 
-    ---@param element Blueprint|BlueprintTab|BlueprintSection
+    ---@param element Blueprint|BlueprintTab|BlueprintSection|BlueprintColumn
     ---@param path BlueprintSettingPath
     local function visitElement(element, path)
         for _, setting in ipairs(self:GetSettings(element)) do
@@ -169,6 +186,10 @@ function BlueprintShape:_BuildIndex(blueprint)
                 containerPath = containerPath,
             })
             index.hasAnySettings = true
+        end
+    
+        for _, column in ipairs(self:GetColumns(element)) do
+            visitElement(column, path)
         end
 
         for _, section in ipairs(self:GetSections(element)) do
