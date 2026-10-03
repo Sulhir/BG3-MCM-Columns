@@ -37,14 +37,40 @@ function BlueprintColumn:New(options)
     return self
 end
 
+function BlueprintColumn:GetLocaName()
+    local columnName = self.ColumnName
+    if self:GetHandles() then
+        if self:GetHandles().NameHandle then
+            local translatedName = Ext.Loca.GetTranslatedString(self:GetHandles().NameHandle)
+            if translatedName ~= nil and translatedName ~= "" then
+                columnName = translatedName
+            end
+        end
+    end
 
---- Get the unique identifier of this Column block
---- @return string
+    return columnName
+end
+
 function BlueprintColumn:GetId()
     return self.ColumnId
 end
 
---- Get the nested settings assigned to this column
---- @return BlueprintSetting[]
+function BlueprintColumn:GetDescription()
+    return self.ColumnDescription
+end
+
 function BlueprintColumn:GetSettings()
     return self.Settings
+end
+
+function BlueprintColumn:SetColumnName(value)
+    self.ColumnName = value
+end
+
+function BlueprintColumn:GetOptions()
+    return self.Options
+end
+
+function BlueprintColumn:GetHandles()
+    return self.Handles
+end
