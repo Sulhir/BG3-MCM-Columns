@@ -85,7 +85,7 @@ end
 ---@param options? table<string, unknown>
 ---@param columnName? string
 ---@return BlueprintColumn
-function BlueprintColumn:AddSetting(name, type, default, description, options, columnnName)
+function BlueprintColumn:AddSetting(name, type, default, description, options, columnName)
     local setting = BlueprintSetting:New({
         Name = name,
         Type = type,
