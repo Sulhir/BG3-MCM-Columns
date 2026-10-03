@@ -6,6 +6,7 @@
 ---@field private Tabs? BlueprintTab[]
 ---@field private Sections? BlueprintSection[]
 ---@field private Settings? BlueprintSetting[]
+---@field private Columns? BlueprintColumn[]
 ---@field private Handles? table
 BlueprintTab = _Class:Create("BlueprintTab", nil, {
     TabId = "",
@@ -14,6 +15,7 @@ BlueprintTab = _Class:Create("BlueprintTab", nil, {
     VisibleIf = "",
     Tabs = {},
     Sections = {},
+    Columns = {},
     Settings = {},
     Handles = {}
 })
@@ -28,6 +30,7 @@ function BlueprintTab:New(options)
     self.VisibleIf = options.VisibleIf or ""
     self.Tabs = {}
     self.Sections = {}
+    self.Columns = {}
     self.Settings = {}
     self.Handles = options.Handles
 
@@ -41,6 +44,13 @@ function BlueprintTab:New(options)
         for _, sectionOptions in ipairs(options.Sections) do
             local section = BlueprintSection:New(sectionOptions)
             table.insert(self.Sections, section)
+        end
+    end
+
+    if options.Columns then
+        for _, columnOptions in ipairs(options.Columns) do
+            local column = BlueprintColumn:New(columnOptions)
+            table.insert(self.Columns, column)
         end
     end
 
@@ -109,6 +119,12 @@ function BlueprintTab:GetSections()
     return self.Sections
 end
 
+--- Get the Columns of the BlueprintTab.
+--- @return BlueprintColumn[] columns
+function BlueprintTab:GetColumns()
+    return self.Columns
+end
+
 --- Get the Settings of the BlueprintTab.
 --- @return BlueprintSetting[] settings
 function BlueprintTab:GetSettings()
@@ -121,6 +137,16 @@ end
 function BlueprintTab:AddSection(sectionOptions)
     local section = BlueprintSection:New(sectionOptions)
     table.insert(self.Sections, section)
+    BlueprintShape:InvalidateCache()
+    return self
+end
+
+--- Add a new BlueprintColumn to the BlueprintTab.
+--- @param columnOptions table
+--- @return BlueprintTab
+function BlueprintTab:AddColumn(columnOptions)
+    local column = BlueprintColumn:New(columnOptions)
+    table.insert(self.Columns, column)
     BlueprintShape:InvalidateCache()
     return self
 end
