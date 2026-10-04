@@ -8,7 +8,7 @@
 ---@field parent ExtuiTabItem
 ColumnPane = _Class:Create("ColumnPane", nil, {})
 
---columns must only exist inside the Right Pane
+---columns must only exist inside the Right Pane
 ---@param parent any 
 function ColumnPane:New(parentContainer)
     local this = setmetatable({}, self)
@@ -19,5 +19,8 @@ end
 --slice up the right pane into vertical columns
 ---@param columnsCount number
 ---@param modUUID string
-function ColumnPane:CreateGrid(columnsCount, modUUID)
-  if not columnsCount or columnsCount == 0 then return nil end
+function ColumnPane:CreateColumnTrack(columnId, modUUID)
+    local columnGroup = self.parent:AddGroup(columnId)
+    columnGroup.WidthStretch = true
+    return columnGroup
+end
