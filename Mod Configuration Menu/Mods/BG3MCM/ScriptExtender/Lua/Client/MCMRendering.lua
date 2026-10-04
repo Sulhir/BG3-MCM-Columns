@@ -543,7 +543,7 @@ function MCMRendering:CreateModMenuColumn(columnIndex, modGroup, column, modSett
     local columnTabs = column.GetTabs()
     local columnSections = column:GetSections()
     local columnOptions = column:GetOptions()
-    local columnGroup = modGroup:AddGroup(sectionId)
+    local columnGroup = modGroup:AddGroup(columnId)
     columnGroup.IDContext = modUUID .. "_" .. columnId .. "_Group"
 
     if column:GetVisibleIf() and column:GetVisibleIf().Conditions then
