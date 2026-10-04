@@ -534,7 +534,7 @@ end
 ---@return nil
 function MCMRendering:CreateModMenuColumn(columnIndex, modGroup, column, modSettings, modUUID)
     if columnIndex > 1 then
-        addConditionalSpacingDummy(modGroup, modUUID, section:GetVisibleIf(), 10)
+        addConditionalSpacingDummy(modGroup, modUUID, column:GetVisibleIf(), 10)
     end
 
     local columnName = column:GetLocaName()
