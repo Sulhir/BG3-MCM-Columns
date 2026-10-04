@@ -630,20 +630,21 @@ function MCMRendering:CreateModMenuSection(sectionIndex, modGroup, section, modS
         self:CreateModMenuColumn(sectionContentElement, sectionColumns, modSettings, modUUID)
     else
     
-    -- Gather setting groups to add dummy separators (which makes them go away if visibility conditions are not met)
-    local settingGroups = {}
-    for _, setting in ipairs(section:GetSettings()) do
-        local group = self:CreateModMenuSetting(sectionContentElement, setting, modSettings, modUUID)
-        if group then
-            table.insert(settingGroups, {
-                group = group,
-                visibleIf = setting:GetVisibleIf(),
-            })
+        -- Gather setting groups to add dummy separators (which makes them go away if visibility conditions are not met)
+        local settingGroups = {}
+        for _, setting in ipairs(section:GetSettings()) do
+            local group = self:CreateModMenuSetting(sectionContentElement, setting, modSettings, modUUID)
+            if group then
+                table.insert(settingGroups, {
+                    group = group,
+                    visibleIf = setting:GetVisibleIf(),
+                    })
+            end
         end
-    end
-    for i, settingGroup in ipairs(settingGroups) do
-        if i < #settingGroups then
-            addConditionalSpacingDummy(settingGroup.group, modUUID, settingGroup.visibleIf, 10)
+        for i, settingGroup in ipairs(settingGroups) do
+            if i < #settingGroups then
+                addConditionalSpacingDummy(settingGroup.group, modUUID, settingGroup.visibleIf, 10)
+            end
         end
     end
 end
