@@ -182,7 +182,7 @@ function BlueprintShape:ForEachColumn(blueprint, callback)
         for _, tab in ipairs(self:GetTabs(element)) do
             visitElement(tab)
         end
-        for _, column in ipairs(self:GetSections(element)) do
+        for _, section in ipairs(self:GetSections(element)) do
             visitElement(section)
         end
     end
