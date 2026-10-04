@@ -527,7 +527,7 @@ end
 ---@param modSettings table<string, table> The settings for the mod
 ---@param modUUID string The UUID of the mod
 ---@return nil
-function MCMRendering:RenderBlueprintColumns(parentContainer, columns, modSettings, modUUID)
+function MCMRendering:CreateModMenuColumn(parentContainer, columns, modSettings, modUUID)
     local columnCount = #columns
     if columnCount == 0 then return end
 
