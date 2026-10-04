@@ -654,7 +654,13 @@ function BlueprintPreprocessing:ValidateTabsVisibleIf(blueprint)
             isValid = false
         end
     end)
-
+    
+    BlueprintShape:ForEachColumn(blueprint, function(column)
+            if not self:ValidateVisibleIf(column:GetVisibleIf(), blueprint, "Column", column:GetId() or "Unknown") then
+                isValid = false
+            end
+        end)
+    
     return isValid
 end
 
