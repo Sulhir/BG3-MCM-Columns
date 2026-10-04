@@ -9,7 +9,7 @@
 ColumnPane = _Class:Create("ColumnPane", nil, {})
 
 ---columns must only exist inside the Right Pane
----@param parent any 
+---@param parentContainer any 
 function ColumnPane:New(parentContainer)
     local this = setmetatable({}, self)
     this.parent = parentContainer
