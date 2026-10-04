@@ -160,6 +160,23 @@ function BlueprintShape:ForEachSection(blueprint, callback)
     visitElement(blueprint)
 end
 
+function BlueprintShape:ForEachColumn(blueprint, callback)
+    local function visitElement(element)
+        for _, column in ipairs(self:GetColumns(element)) do
+            callback(column)
+            visitElement(column)
+        end
+        for _, tab in ipairs(self:GetTabs(element)) do
+            visitElement(tab)
+        end
+        for _, section in ipairs(self:GetSections(element)) do
+            visitElement(section)
+        end
+    end
+    
+    visitElement(blueprint)
+end
+
 ---@param blueprint Blueprint|BlueprintTab|BlueprintSection
 ---@return BlueprintCacheIndex
 function BlueprintShape:_BuildIndex(blueprint)
