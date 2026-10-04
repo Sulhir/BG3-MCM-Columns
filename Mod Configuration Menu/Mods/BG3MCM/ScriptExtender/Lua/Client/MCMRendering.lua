@@ -498,7 +498,6 @@ function MCMRendering:CreateModMenuSubTab(modTabs, blueprintTab, modSettings, mo
             self:CreateModMenuSection(sectionIndex, imguiTab, section, modSettings, modUUID)
         end
     elseif #tabColumns > 0 then
-        for columnIndex, column in ipairs(tabColumns) do
             self:CreateModMenuColumn(imguiTab, tabColumns, modSettings, modUUID)
         end
     elseif #tabSettings > 0 then
