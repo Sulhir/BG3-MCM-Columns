@@ -499,7 +499,7 @@ function MCMRendering:CreateModMenuSubTab(modTabs, blueprintTab, modSettings, mo
         end
     elseif #tabColumns > 0 then
         for columnIndex, column in ipairs(tabColumns) do
-            self:CreateModMenuColumn(imguiTab, column, modSettings, modUUID)
+            self:CreateModMenuColumn(imguiTab, tabColumns, modSettings, modUUID)
         end
     elseif #tabSettings > 0 then
         -- Gather setting groups to add dummy separators (which makes them go away if visibility conditions are not met)
@@ -588,6 +588,7 @@ function MCMRendering:CreateModMenuSection(sectionIndex, modGroup, section, modS
     local sectionName = section:GetLocaName()
     local sectionId = section:GetId()
     local sectionDescription = section:GetDescription()
+    local sectionColumns = section:GetColumns()
     local sectionOptions = section:GetOptions()
     local sectionGroup = modGroup:AddGroup(sectionId)
     sectionGroup.IDContext = modUUID .. "_" .. sectionId .. "_Group"
@@ -613,6 +614,9 @@ function MCMRendering:CreateModMenuSection(sectionIndex, modGroup, section, modS
         local translatedDescription = Ext.Loca.GetTranslatedString(section:GetHandles().DescriptionHandle)
         if translatedDescription and translatedDescription ~= "" then
             sectionDescriptionText = VCString:ReplaceBrWithNewlines(translatedDescription)
+    --isfix? plain text NameHandle should take priority over sectionName
+         elseif section:GetHandles().DescriptionHandle and section:GetHandles().DescriptionHandle ~= "" then
+            sectionDescriptionText = section:GetHandles().DescriptionHandle
         end
 
         local addedDescription = sectionContentElement:AddText(sectionDescriptionText)
@@ -621,7 +625,11 @@ function MCMRendering:CreateModMenuSection(sectionIndex, modGroup, section, modS
         addedDescription:SetColor("Text", Color.NormalizedRGBA(255, 255, 255, 0.67))
         sectionContentElement:AddDummy(0, 2)
     end
-
+    -- 
+    if sectionColumns then
+        self:CreateModMenuColumn(sectionContentElement, sectionColumns, modSettings, modUUID)
+    else
+    
     -- Gather setting groups to add dummy separators (which makes them go away if visibility conditions are not met)
     local settingGroups = {}
     for _, setting in ipairs(section:GetSettings()) do
