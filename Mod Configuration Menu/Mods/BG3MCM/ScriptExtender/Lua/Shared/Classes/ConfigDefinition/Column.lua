@@ -15,9 +15,9 @@ BlueprintColumn = _Class:Create("BlueprintColumn", nil, {
     Handles = {}
 })
 
---- Constructor for the BlueprintColumn class.
---- @param options table
---- @return BlueprintColumn
+---Constructor for the BlueprintColumn class.
+---@param options table
+---@return BlueprintColumn
 function BlueprintColumn:New(options)
     ---@type BlueprintColumn
     local self = setmetatable({}, BlueprintColumn)
@@ -36,10 +36,7 @@ function BlueprintColumn:New(options)
         end
     end
 
-    return self
-end
-
-if options.Sections then
+    if options.Sections then
         for _, sectionOptions in ipairs(options.Sections) do
             local section = BlueprintSection:New(sectionOptions)
             table.insert(self.Sections, section)
