@@ -123,21 +123,21 @@ end
 ---@param callback fun(tab: BlueprintTab)
 function BlueprintShape:ForEachTab(blueprint, callback)
     local function visitTabs(tabs)
-        for _, tab in ipairs(tabs or {}) do
+        for _, tab in ipairs(self:GetTabs(element)) do
             callback(tab)
-            visitTabs(self:GetTabs(tab))
-
-            for _, section in ipairs(self:GetSections(tab)) do
-                visitTabs(self:GetTabs(section))
-            end
+            visitElement(tab)
+        end
+        for _, section in ipairs(self:GetSections(tab)) do
+            callback(section)
+            visitElement(section)
+        end
+        for _, column in ipairs(self:GetColumns(element)) do
+            callback(column)
+            visitElement(column)
         end
     end
 
-    visitTabs(self:GetTabs(blueprint))
-
-    for _, section in ipairs(self:GetSections(blueprint)) do
-        visitTabs(self:GetTabs(section))
-    end
+    visitElement(blueprint)
 end
 
 ---@param blueprint Blueprint
@@ -153,6 +153,7 @@ function BlueprintShape:ForEachSection(blueprint, callback)
             visitElement(column)
         end
         for _, tab in ipairs(self:GetTabs(element)) do
+            callback(tab)
             visitElement(tab)
         end
     end
@@ -206,7 +207,7 @@ function BlueprintShape:_BuildIndex(blueprint)
         end
     
         for _, column in ipairs(self:GetColumns(element)) do
-            visitElement(column, path)
+            visitElement(column, appendPath(path, getElementId(column)))
         end
 
         for _, section in ipairs(self:GetSections(element)) do
