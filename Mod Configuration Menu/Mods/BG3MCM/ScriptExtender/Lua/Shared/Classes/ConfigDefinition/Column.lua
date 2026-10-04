@@ -11,6 +11,7 @@ BlueprintColumn = _Class:Create("BlueprintColumn", nil, {
     ColumnDescription = "",
     Options = {},
     Settings = {},
+    Sections = {},
     Handles = {}
 })
 
@@ -25,6 +26,7 @@ function BlueprintColumn:New(options)
     self.ColumnDescription = options.ColumnDescription or ""
     self.Options = options.Options or {}
     self.Settings = {}
+    self.Sections = {} 
     self.Handles = options.Handles
 
      if options.Settings then
@@ -34,6 +36,15 @@ function BlueprintColumn:New(options)
         end
     end
 
+    return self
+end
+
+if options.Sections then
+        for _, sectionOptions in ipairs(options.Sections) do
+            local section = BlueprintSection:New(sectionOptions)
+            table.insert(self.Sections, section)
+        end
+    end
     return self
 end
 
@@ -61,6 +72,10 @@ end
 
 function BlueprintColumn:GetSettings()
     return self.Settings
+end
+
+function BlueprintColumn:GetSections()
+    return self.Sections
 end
 
 function BlueprintColumn:SetColumnName(value)
