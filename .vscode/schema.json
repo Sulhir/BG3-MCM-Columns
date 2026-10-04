@@ -73,6 +73,14 @@
             },
             "markdownDescription": "The sections that will be displayed in the MCM menu.\nEach section can contain either tabs or settings.\nSections are displayed in the order that they are defined in this file."
         },
+        "Columns": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "$ref": "#/definitions/Column"
+            },
+            "markdownDescription": "The list of columns to be displayed outside of any tabs or sections at the root level of the MCM menu.\nEach column can contain either sections or settings arrays distributed horizontally."
+        }
         "Settings": {
             "type": "array",
             "minItems": 1,
@@ -95,6 +103,11 @@
         {
             "required": [
                 "Sections"
+            ]
+        },
+        {
+            "required": [
+                "Columns"
             ]
         },
         {
@@ -144,6 +157,12 @@
                     },
                     "markdownDescription": "The sections that will be displayed within the tab. They provide a distinct visual separation in the MCM menu, with headers and optional descriptions."
                 },
+                "Columns": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": { "$ref": "#/definitions/Column" },
+                    "markdownDescription": "The columns that will be displayed within the tab to layout content horizontally."
+                },
                 "Settings": {
                     "type": "array",
                     "minItems": 1,
@@ -180,6 +199,65 @@
                 "TabName"
             ],
             "markdownDescription": "A single tab in the MCM menu."
+        },
+        "Column": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "ColumnId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "markdownDescription": "The unique identifier for the column. This value should be unique across all columns in the section or tab."
+                },
+                "ColumnName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "markdownDescription": "The name of the column as it will be displayed in the MCM menu.\nWill be localized if a handle is provided."
+                },
+                "ColumnDescription": {
+                    "type": "string",
+                    "minLength": 1,
+                    "markdownDescription": "The description of the column.\nWill be localized if a handle is provided.\nCurrently unused."
+                },
+                "Sections": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/Section"
+                    },
+                    "markdownDescription": "The sections that will be displayed within this column."
+                },
+                "Settings": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/Setting"
+                    },
+                    "markdownDescription": "The settings that will be displayed within the column."
+                },
+                "Handles": {
+                    "$ref": "#/definitions/TabHandles",
+                    "markdownDescription": "Handles to localize the column's strings."
+                }
+            },
+            "anyOf": [
+                {
+                    "required": [
+                        "Settings"
+                    ]
+                },
+                {
+                    "required": [
+                        "Sections"
+                    ]
+                }
+            ],
+            "required": [
+                "ColumnId",
+                "ColumnName"
+            ],
+            "markdownDescription": "A single column in a layout row."
         },
         "Setting": {
             "type": "object",
@@ -1326,6 +1404,12 @@
                         "$ref": "#/definitions/Tab"
                     },
                     "markdownDescription": "The tabs that will be displayed within the section. They provide a distinct visual separation in the MCM menu, with headers and optional descriptions."
+                },
+                "Columns": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": { "$ref": "#/definitions/Column" },
+                    "markdownDescription": "The columns that will be displayed horizontally within the section."
                 },
                 "Settings": {
                     "type": "array",
