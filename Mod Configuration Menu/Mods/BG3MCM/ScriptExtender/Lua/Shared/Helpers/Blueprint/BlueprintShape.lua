@@ -38,7 +38,7 @@ local function getElementId(element)
         return element:GetId()
     end
 
-    return element.Id or element.TabId or element.SectionId
+    return element.Id or element.TabId or element.SectionId or element.ColumnId
 end
 
 ---@param element any
