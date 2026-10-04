@@ -626,7 +626,7 @@ function MCMRendering:CreateModMenuSection(sectionIndex, modGroup, section, modS
         sectionContentElement:AddDummy(0, 2)
     end
     -- 
-    if sectionColumns then
+    if sectionColumns[1] then
         self:CreateModMenuColumn(sectionContentElement, sectionColumns, modSettings, modUUID)
     else
     
