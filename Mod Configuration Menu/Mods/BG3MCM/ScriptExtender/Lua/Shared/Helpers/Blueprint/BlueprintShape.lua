@@ -123,42 +123,6 @@ function BlueprintShape:ForEachElement(blueprint, callback)
     visitElement(blueprint, "blueprint")
 end
 
-
-    ---@param element Blueprint|BlueprintTab|BlueprintSection|BlueprintColumn
-    ---@param path BlueprintSettingPath
-    local function visitElement(element, path)
-        for _, setting in ipairs(self:GetSettings(element)) do
-            local settingId = getElementId(setting)
-            local containerPath = copyPath(path)
-            if settingId then
-                index.byId[settingId] = setting
-                index.containerPathById[settingId] = containerPath
-            end
-            table.insert(index.entries, {
-                id = settingId,
-                setting = setting,
-                containerPath = containerPath,
-            })
-            index.hasAnySettings = true
-        end
-    
-        for _, column in ipairs(self:GetColumns(element)) do
-            visitElement(column, appendPath(path, getElementId(column)))
-        end
-
-        for _, section in ipairs(self:GetSections(element)) do
-            visitElement(section, appendPath(path, getElementId(section)))
-        end
-
-        for _, tab in ipairs(self:GetTabs(element)) do
-            visitElement(tab, appendPath(path, getElementId(tab)))
-        end
-    end
-
-    visitElement(blueprint, {})
-    return index
-end
-
 ---@param blueprint Blueprint
 ---@param callback fun(tab: BlueprintTab)
 function BlueprintShape:ForEachTab(blueprint, callback)
@@ -216,6 +180,41 @@ function BlueprintShape:ForEachColumn(blueprint, callback)
     end
     
     visitElement(blueprint)
+end
+
+    ---@param element Blueprint|BlueprintTab|BlueprintSection|BlueprintColumn
+    ---@param path BlueprintSettingPath
+    local function visitElement(element, path)
+        for _, setting in ipairs(self:GetSettings(element)) do
+            local settingId = getElementId(setting)
+            local containerPath = copyPath(path)
+            if settingId then
+                index.byId[settingId] = setting
+                index.containerPathById[settingId] = containerPath
+            end
+            table.insert(index.entries, {
+                id = settingId,
+                setting = setting,
+                containerPath = containerPath,
+            })
+            index.hasAnySettings = true
+        end
+    
+        for _, column in ipairs(self:GetColumns(element)) do
+            visitElement(column, appendPath(path, getElementId(column)))
+        end
+
+        for _, section in ipairs(self:GetSections(element)) do
+            visitElement(section, appendPath(path, getElementId(section)))
+        end
+
+        for _, tab in ipairs(self:GetTabs(element)) do
+            visitElement(tab, appendPath(path, getElementId(tab)))
+        end
+    end
+
+    visitElement(blueprint, {})
+    return index
 end
 
 ---@param blueprint Blueprint|BlueprintTab|BlueprintSection
