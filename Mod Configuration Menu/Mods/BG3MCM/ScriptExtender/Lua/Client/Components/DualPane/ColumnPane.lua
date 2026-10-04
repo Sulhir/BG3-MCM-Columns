@@ -1,12 +1,12 @@
 --------------------------------------------
--- ColumnController Module
+-- ColumnPane Module
 -- Manages the columns of the Right Pane
 -- Wires columns into the Right Pane
 --------------------------------------------
 
----@class ColumnController
+---@class ColumnPane
 ---@field parent ExtuiTabItem
-ColumnController = _Class:Create("ColumnController", nil, {})
+ColumnPane = _Class:Create("ColumnController", nil, {})
 
 --columns must only exist inside the Right Pane
 ---@param parent any 
