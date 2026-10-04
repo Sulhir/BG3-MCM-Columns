@@ -498,7 +498,9 @@ function MCMRendering:CreateModMenuSubTab(modTabs, blueprintTab, modSettings, mo
             self:CreateModMenuSection(sectionIndex, imguiTab, section, modSettings, modUUID)
         end
     elseif #tabColumns > 0 then
-            self:CreateModMenuColumn(imguiTab, tabColumns, modSettings, modUUID)
+            for columnIndex, column in ipairs(blueprintTab:GetColumns()) do
+            self:CreateModMenuColumn(columnIndex, imguiTab, column, modSettings, modUUID)
+        end
     elseif #tabSettings > 0 then
         -- Gather setting groups to add dummy separators (which makes them go away if visibility conditions are not met)
         local settingGroups = {}
