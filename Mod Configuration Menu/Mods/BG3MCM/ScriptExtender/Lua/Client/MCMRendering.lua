@@ -525,46 +525,78 @@ end
 ---@param modSettings table<string, table> The settings for the mod
 ---@param modUUID string The UUID of the mod
 ---@return nil
-function MCMRendering:CreateModMenuColumn(parentContainer, columns, modSettings, modUUID)
-    local columnCount = #columns
-    if columnCount == 0 then return end
-
-    local layoutTable = parentContainer:AddTable("ColumnsTable_" .. modUUID .. "_" .. Ext.Utils.GenerateRandomCharacterString(4), columnCount)
-    layoutTable.BordersOuter = false
-    layoutTable.BordersInner = false
-    layoutTable.RowBg = false
-    
-    for i = 1, columnCount do
-        layoutTable:AddColumn("Col_" .. i, "WidthStretch")
+--- Create a new column for a mod in the MCM
+---@param columnIndex number The index of the column
+---@param modGroup any The IMGUI group for the mod
+---@param column BlueprintColumn The column to create a tab for
+---@param modSettings table<string, table> The settings for the mod
+---@param modUUID string The UUID of the mod
+---@return nil
+function MCMRendering:CreateModMenuColumn(columnIndex, modGroup, column, modSettings, modUUID)
+    if columnIndex > 1 then
+        addConditionalSpacingDummy(modGroup, modUUID, section:GetVisibleIf(), 10)
     end
-    
-    local columnRow = layoutTable:AddRow()
-    
-    for columnIndex, columnData in ipairs(columns) do
-        local cellContainer = columnRow:AddCell()
 
-        if columnData.Sections and #columnData.Sections > 0 then
-            for sectionIndex, subSection in ipairs(columnData.Sections) do
-                self:CreateModMenuSection(sectionIndex, cellContainer, subSection, modSettings, modUUID)
-            end
-        elseif columnData.Settings and #columnData.Settings > 0 then
-            local columnSettings = columnData.Settings or {}
-            local settingGroups = {}
-            
-            for _, setting in ipairs(columnSettings) do
-                local group = self:CreateModMenuSetting(cellContainer, setting, modSettings, modUUID)
-                if group then
-                    table.insert(settingGroups, {
-                        group = group,
-                        visibleIf = setting:GetVisibleIf(),
+    local columnName = column:GetLocaName()
+    local columnId = column:GetId()
+    local columnDescription = column:GetDescription()
+    local columnTabs = column.GetTabs()
+    local columnSections = column:GetSections()
+    local columnOptions = column:GetOptions()
+    local columnGroup = modGroup:AddGroup(sectionId)
+    columnGroup.IDContext = modUUID .. "_" .. columnId .. "_Group"
+
+    if column:GetVisibleIf() and column:GetVisibleIf().Conditions then
+        VisibilityManager.registerCondition(modUUID, columnGroup, column:GetVisibleIf())
+    end
+
+    local columnContentElement = columnGroup
+    if columnOptions.IsCollapsible then
+        local columnCollapsingHeader = columnGroup:AddCollapsingHeader(columnName)
+        columnContentElement = columnCollapsingHeader
+    else
+        local columnHeader = columnContentElement:AddSeparatorText(columnName)
+        columnHeader.IDContext = modUUID .. "_" .. columnName
+        columnHeader:SetColor("Text", Color.NormalizedRGBA(255, 255, 255, 1))
+        columnHeader:SetColor("Separator", Color.NormalizedRGBA(255, 255, 255, 0.33))
+    end
+
+    -- FIXME: handles are being misobtained somehow
+    if columnDescription and columnDescription ~= "" then
+        local columnDescriptionText = columnDescription
+        local translatedDescription = Ext.Loca.GetTranslatedString(column:GetHandles().DescriptionHandle)
+        if translatedDescription and translatedDescription ~= "" then
+            columnDescriptionText = VCString:ReplaceBrWithNewlines(translatedDescription)
+    --isfix? plain text NameHandle should take priority over columnName
+         elseif column:GetHandles().DescriptionHandle and column:GetHandles().DescriptionHandle ~= "" then
+            columnDescriptionText = column:GetHandles().DescriptionHandle
+        end
+
+        local addedDescription = columnContentElement:AddText(columnDescriptionText)
+        addedDescription.TextWrapPos = 0
+        addedDescription.IDContext = columnGroup.IDContext .. "_Description_"
+        addedDescription:SetColor("Text", Color.NormalizedRGBA(255, 255, 255, 0.67))
+        columnContentElement:AddDummy(0, 2)
+    end
+    -- 
+    if columnSections[1] then
+        self:CreateModMenuSection(columnContentElement, columnSections, modSettings, modUUID)
+    else
+    
+        -- Gather setting groups to add dummy separators (which makes them go away if visibility conditions are not met)
+        local settingGroups = {}
+        for _, setting in ipairs(section:GetSettings()) do
+            local group = self:CreateModMenuSetting(columnContentElement, setting, modSettings, modUUID)
+            if group then
+                table.insert(settingGroups, {
+                    group = group,
+                    visibleIf = setting:GetVisibleIf(),
                     })
-                end
             end
-            
-            for i, settingGroup in ipairs(settingGroups) do
-                if i < #settingGroups then
-                    addConditionalSpacingDummy(settingGroup.group, modUUID, settingGroup.visibleIf, 10)
-                end
+        end
+        for i, settingGroup in ipairs(settingGroups) do
+            if i < #settingGroups then
+                addConditionalSpacingDummy(settingGroup.group, modUUID, settingGroup.visibleIf, 10)
             end
         end
     end
