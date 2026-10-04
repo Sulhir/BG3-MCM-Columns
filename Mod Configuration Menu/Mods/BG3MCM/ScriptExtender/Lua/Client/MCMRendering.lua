@@ -491,7 +491,7 @@ function MCMRendering:CreateModMenuSubTab(modTabs, blueprintTab, modSettings, mo
     end
 
     local tabSections = blueprintTab:GetSections()
-    local tabColumns = blueprintTab.GetColumns()
+    local tabColumns = blueprintTab:GetColumns()
     local tabSettings = blueprintTab:GetSettings()
     if #tabSections > 0 then
         for sectionIndex, section in ipairs(blueprintTab:GetSections()) do
