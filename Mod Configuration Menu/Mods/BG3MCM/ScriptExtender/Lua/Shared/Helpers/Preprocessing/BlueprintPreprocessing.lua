@@ -41,12 +41,33 @@ function BlueprintPreprocessing:HasIncorrectStructure(blueprint)
     --- Check if blueprint has at least one setting
     local hasSettings = blueprint:GetSettings() and #blueprint:GetSettings() > 0
 
+    --- Check if blueprint has at least one column
+    local hasColumns = blueprint:GetColumns() and #blueprint:GetColumns() > 0
+
     --- Check if blueprint does NOT have both tabs and settings
     if hasTabs and hasSettings then
         MCMWarn(0,
             "Blueprint for mod '" ..
             Ext.Mod.GetMod(self.currentmodUUID).Info.Name ..
-            "' has both tabs and settings. Please contact " ..
+            "' cannot combine root-level tabs and settings. Please contact " ..
+            Ext.Mod.GetMod(self.currentmodUUID).Info.Author .. " about this issue.")
+        return true
+    end
+    --- Check if blueprint does NOT have both tabs and columns
+    if hasTabs and hasColumns then
+        MCMWarn(0,
+            "Blueprint for mod '" ..
+            Ext.Mod.GetMod(self.currentmodUUID).Info.Name ..
+            "' cannot combine root-level tabs and columns. Please contact " ..
+            Ext.Mod.GetMod(self.currentmodUUID).Info.Author .. " about this issue.")
+        return true
+    end
+    --- Check if blueprint does NOT have both settings and columns
+    if hasSettings and hasColumns then
+        MCMWarn(0,
+            "Blueprint for mod '" ..
+            Ext.Mod.GetMod(self.currentmodUUID).Info.Name ..
+            "' cannot combine root-level settings and columns. Please contact " ..
             Ext.Mod.GetMod(self.currentmodUUID).Info.Author .. " about this issue.")
         return true
     end
@@ -66,6 +87,14 @@ function BlueprintPreprocessing:HasIncorrectStructure(blueprint)
     for _, section in ipairs(BlueprintShape:GetSections(blueprint)) do
         if not self:ValidateTabStructure(BlueprintShape:GetTabs(section)) then
             return true
+        end
+    end
+
+    for _, column in ipairs(BlueprintShape:GetColumns(blueprint)) do
+        for _, section in ipairs(BlueprintShape:GetSections(column)) do
+            if not self:ValidateTabStructure(BlueprintShape:GetTabs(section)) then
+                return true
+            end
         end
     end
 
@@ -98,6 +127,14 @@ function BlueprintPreprocessing:ValidateTabStructure(tabs)
         for _, section in ipairs(BlueprintShape:GetSections(tab)) do
             if not self:ValidateTabStructure(BlueprintShape:GetTabs(section)) then
                 return false
+            end
+        end
+        
+        for _, column in ipairs(BlueprintShape:GetColumns(tab)) do
+            for _, section in ipairs(BlueprintShape:GetSections(column)) do
+                if not self:ValidateTabStructure(BlueprintShape:GetTabs(section)) then
+                    return false
+                end
             end
         end
     end
