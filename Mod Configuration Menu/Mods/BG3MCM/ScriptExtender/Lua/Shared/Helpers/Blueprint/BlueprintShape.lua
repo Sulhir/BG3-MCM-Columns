@@ -157,9 +157,6 @@ function BlueprintShape:ForEachSection(blueprint, callback)
     visitElement(blueprint)
 end
 
-    visitElement(blueprint)
-end
-
 ---@param blueprint Blueprint|BlueprintTab|BlueprintSection
 ---@return BlueprintCacheIndex
 function BlueprintShape:_BuildIndex(blueprint)
