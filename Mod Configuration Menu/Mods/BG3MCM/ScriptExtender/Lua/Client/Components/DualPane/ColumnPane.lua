@@ -6,7 +6,7 @@
 
 ---@class ColumnPane
 ---@field parent ExtuiTabItem
-ColumnPane = _Class:Create("ColumnController", nil, {})
+ColumnPane = _Class:Create("ColumnPane", nil, {})
 
 --columns must only exist inside the Right Pane
 ---@param parent any 
