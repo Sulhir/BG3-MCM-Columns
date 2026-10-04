@@ -543,12 +543,12 @@ function MCMRendering:CreateModMenuColumn(parentContainer, columns, modSettings,
     for columnIndex, columnData in ipairs(columns) do
         local cellContainer = columnRow:AddCell()
 
-        if columnData.GetSections and #columnData:GetSections() > 0 then
-            for sectionIndex, subSection in ipairs(columnData:GetSections()) do
+        if columnData.Sections and #columnData.Sections > 0 then
+            for sectionIndex, subSection in ipairs(columnData.Sections) do
                 self:CreateModMenuSection(sectionIndex, cellContainer, subSection, modSettings, modUUID)
             end
-        elseif columnData.GetSettings and #columnData:GetSettings() > 0 then
-            local columnSettings = columnData:GetSettings() or {}
+        elseif columnData.Settings and #columnData.Settings > 0 then
+            local columnSettings = columnData.Settings or {}
             local settingGroups = {}
             
             for _, setting in ipairs(columnSettings) do
