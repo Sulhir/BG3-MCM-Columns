@@ -82,7 +82,7 @@ function BlueprintShape:GetColumns(element)
 
     return element.Columns or {}
 end
-    
+
 ---@param element any
 ---@return BlueprintSetting[]
 function BlueprintShape:GetSettings(element)
@@ -106,13 +106,13 @@ function BlueprintShape:ForEachElement(blueprint, callback)
         for _, section in ipairs(self:GetSections(element)) do
             visitElement(section, "section")
         end
-        
-        for _, column in ipairs(self:GetColumns(element)) do
-            visitElement(column, "column")
-        end
-        
+
         for _, tab in ipairs(self:GetTabs(element)) do
             visitElement(tab, "tab")
+        end
+
+        for _, column in ipairs(self:GetColumns(element)) do
+            visitElement(column, "column")
         end
 
         for _, setting in ipairs(self:GetSettings(element)) do
@@ -127,21 +127,27 @@ end
 ---@param callback fun(tab: BlueprintTab)
 function BlueprintShape:ForEachTab(blueprint, callback)
     local function visitTabs(tabs)
-        for _, tab in ipairs(self:GetTabs(element)) do
+        for _, tab in ipairs(tabs or {}) do
             callback(tab)
-            visitElement(tab)
-        end
-        for _, section in ipairs(self:GetSections(tab)) do
-            callback(section)
-            visitElement(section)
-        end
-        for _, column in ipairs(self:GetColumns(element)) do
-            callback(column)
-            visitElement(column)
+            visitTabs(self:GetTabs(tab))
+
+            for _, section in ipairs(self:GetSections(tab)) do
+                visitTabs(self:GetTabs(section))
+            end
+            for _, column in ipairs(self:GetColumns(tab)) do
+                visitTabs(self:GetTabs(column))
+            end
         end
     end
 
-    visitElement(blueprint)
+    visitTabs(self:GetTabs(blueprint))
+
+    for _, section in ipairs(self:GetSections(blueprint)) do
+        visitTabs(self:GetTabs(section))
+    end
+    for _, column in ipairs(self:GetColumns(blueprint)) do
+        visitTabs(self:GetTabs(column))
+    end
 end
 
 ---@param blueprint Blueprint
@@ -152,37 +158,49 @@ function BlueprintShape:ForEachSection(blueprint, callback)
             callback(section)
             visitElement(section)
         end
-        for _, column in ipairs(self:GetColumns(element)) do
-            callback(column)
-            visitElement(column)
-        end
+
         for _, tab in ipairs(self:GetTabs(element)) do
-            callback(tab)
             visitElement(tab)
+        end
+        for _, column in ipairs(self:GetColumns(element)) do
+            visitElement(column)
         end
     end
 
     visitElement(blueprint)
 end
 
+---@param blueprint Blueprint
+---@param callback fun(column: BlueprintColumn)
 function BlueprintShape:ForEachColumn(blueprint, callback)
     local function visitElement(element)
         for _, column in ipairs(self:GetColumns(element)) do
             callback(column)
             visitElement(column)
         end
+
         for _, tab in ipairs(self:GetTabs(element)) do
             visitElement(tab)
         end
-        for _, section in ipairs(self:GetSections(element)) do
+        for _, column in ipairs(self:GetSections(element)) do
             visitElement(section)
         end
     end
-    
+
     visitElement(blueprint)
 end
 
-    ---@param element Blueprint|BlueprintTab|BlueprintSection|BlueprintColumn
+---@param blueprint Blueprint|BlueprintTab|BlueprintSection
+---@return BlueprintCacheIndex
+function BlueprintShape:_BuildIndex(blueprint)
+    local index = {
+        byId = {},
+        entries = {},
+        containerPathById = {},
+        hasAnySettings = false,
+    }
+
+    ---@param element Blueprint|BlueprintTab|BlueprintSection
     ---@param path BlueprintSettingPath
     local function visitElement(element, path)
         for _, setting in ipairs(self:GetSettings(element)) do
@@ -199,10 +217,6 @@ end
             })
             index.hasAnySettings = true
         end
-    
-        for _, column in ipairs(self:GetColumns(element)) do
-            visitElement(column, appendPath(path, getElementId(column)))
-        end
 
         for _, section in ipairs(self:GetSections(element)) do
             visitElement(section, appendPath(path, getElementId(section)))
@@ -211,21 +225,14 @@ end
         for _, tab in ipairs(self:GetTabs(element)) do
             visitElement(tab, appendPath(path, getElementId(tab)))
         end
+        for _, column in ipairs(self:GetColumns(element)) do
+            visitElement(column, appendPath(path, getElementId(column)))
+        end
     end
 
     visitElement(blueprint, {})
     return index
 end
-
----@param blueprint Blueprint|BlueprintTab|BlueprintSection
----@return BlueprintCacheIndex
-function BlueprintShape:_BuildIndex(blueprint)
-    local index = {
-        byId = {},
-        entries = {},
-        containerPathById = {},
-        hasAnySettings = false,
-    }
 
 ---@param blueprint Blueprint|BlueprintTab|BlueprintSection
 ---@return BlueprintCacheIndex
