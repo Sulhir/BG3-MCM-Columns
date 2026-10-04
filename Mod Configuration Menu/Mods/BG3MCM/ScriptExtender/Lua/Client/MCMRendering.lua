@@ -491,10 +491,15 @@ function MCMRendering:CreateModMenuSubTab(modTabs, blueprintTab, modSettings, mo
     end
 
     local tabSections = blueprintTab:GetSections()
+    local tabColumns = blueprintTab.GetColumns()
     local tabSettings = blueprintTab:GetSettings()
     if #tabSections > 0 then
         for sectionIndex, section in ipairs(blueprintTab:GetSections()) do
             self:CreateModMenuSection(sectionIndex, imguiTab, section, modSettings, modUUID)
+        end
+    elseif #tabColumns > 0 then
+        for columnIndex, column in ipairs(tabColumns) do
+            self:CreateModMenuColumn(imguiTab, column, modSettings, modUUID)
         end
     elseif #tabSettings > 0 then
         -- Gather setting groups to add dummy separators (which makes them go away if visibility conditions are not met)
@@ -515,6 +520,58 @@ function MCMRendering:CreateModMenuSubTab(modTabs, blueprintTab, modSettings, mo
         end
     end
 end
+
+---Renders structural side-by-side columns defined by a parent Section or Tab.
+---@param parentContainer ExtuiStyledRenderable The parent container.
+---@param columns table[] An array of parsed BlueprintColumn configuration objects.
+---@param modSettings table<string, table> The settings for the mod
+---@param modUUID string The UUID of the mod
+---@return nil
+function MCMRendering:RenderBlueprintColumns(parentContainer, columns, modSettings, modUUID)
+    local columnCount = #columns
+    if columnCount == 0 then return end
+
+    local layoutTable = parentContainer:AddTable("ColumnsTable_" .. modUUID .. "_" .. Ext.Utils.GenerateRandomCharacterString(4), columnCount)
+    layoutTable.BordersOuter = false
+    layoutTable.BordersInner = false
+    layoutTable.RowBg = false
+    
+    for i = 1, columnCount do
+        layoutTable:AddColumn("Col_" .. i, "WidthStretch")
+    end
+    
+    local columnRow = layoutTable:AddRow()
+    
+    for columnIndex, columnData in ipairs(columns) do
+        local cellContainer = columnRow:AddCell()
+
+        if columnData.GetSections and #columnData:GetSections() > 0 then
+            for sectionIndex, subSection in ipairs(columnData:GetSections()) do
+                self:CreateModMenuSection(sectionIndex, cellContainer, subSection, modSettings, modUUID)
+            end
+        elseif columnData.GetSettings and #columnData:GetSettings() > 0 then
+            local columnSettings = columnData:GetSettings() or {}
+            local settingGroups = {}
+            
+            for _, setting in ipairs(columnSettings) do
+                local group = self:CreateModMenuSetting(cellContainer, setting, modSettings, modUUID)
+                if group then
+                    table.insert(settingGroups, {
+                        group = group,
+                        visibleIf = setting:GetVisibleIf(),
+                    })
+                end
+            end
+            
+            for i, settingGroup in ipairs(settingGroups) do
+                if i < #settingGroups then
+                    addConditionalSpacingDummy(settingGroup.group, modUUID, settingGroup.visibleIf, 10)
+                end
+            end
+        end
+    end
+end
+
 
 --- Create a new section for a mod in the MCM
 ---@param sectionIndex number The index of the section
