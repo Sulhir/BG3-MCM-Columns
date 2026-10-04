@@ -585,7 +585,7 @@ function MCMRendering:CreateModMenuColumn(columnIndex, modGroup, column, modSett
     
         -- Gather setting groups to add dummy separators (which makes them go away if visibility conditions are not met)
         local settingGroups = {}
-        for _, setting in ipairs(section:GetSettings()) do
+        for _, setting in ipairs(column:GetSettings()) do
             local group = self:CreateModMenuSetting(columnContentElement, setting, modSettings, modUUID)
             if group then
                 table.insert(settingGroups, {
