@@ -106,7 +106,11 @@ function BlueprintShape:ForEachElement(blueprint, callback)
         for _, section in ipairs(self:GetSections(element)) do
             visitElement(section, "section")
         end
-
+        
+        for _, column in ipairs(self:GetColumns(element)) do
+            visitElement(column, "column")
+        end
+        
         for _, tab in ipairs(self:GetTabs(element)) do
             visitElement(tab, "tab")
         end
