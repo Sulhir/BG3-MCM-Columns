@@ -17,10 +17,24 @@ function ColumnPane:New(parentContainer)
 end
 
 --slice up the right pane into vertical columns
----@param columnsCount number
+---@param columnId string
 ---@param modUUID string
+---@param columnsCount number
 function ColumnPane:CreateColumnTrack(columnId, modUUID)
-    local columnGroup = self.parent:AddGroup(columnId)
-    columnGroup.WidthStretch = true
-    return columnGroup
+    if not self.layoutTable then
+        local ColumnTableId = "ColumnPaneGrid_" .. modUUID .. "_" .. columnId
+        self.layoutTable = self.parent:AddTable(ColumnTableId, columnsCount)
+        self.layoutTable.BordersOuter = false
+        self.layoutTable.BordersInner = false
+        self.layoutTable.RowBg = false
+
+        for i = 1, columnsCount do
+            self.layoutTable:AddColumn("Track_" .. i, "WidthStretch")
+        end
+
+        self.columnRow = self.layoutTable:AddRow()
+    end
+    
+    local cellContainer = self.columnRow:AddCell()
+    return cellContainer
 end
