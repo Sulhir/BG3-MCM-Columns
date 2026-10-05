@@ -21,20 +21,22 @@ end
 ---@param modUUID string
 ---@param columnsCount number
 function ColumnPane:CreateColumnTrack(columnId, modUUID)
-    if not self.layoutTable then
-        local ColumnTableId = "ColumnPaneGrid_" .. modUUID .. "_" .. columnId
-        self.layoutTable = self.parent:AddTable(ColumnTableId, columnsCount)
-        self.layoutTable.BordersOuter = false
-        self.layoutTable.BordersInner = false
-        self.layoutTable.RowBg = false
-
+    if not columnsCount or columnsCount == 0 then return {} end
+    local ColumnTableId = "ColumnPaneGrid_" .. modUUID
+    local layoutTable = self.parent:AddTable(ColumnTableId, columnsCount)
+    layoutTable.BordersOuter = false
+    layoutTable.BordersInner = false
+    layoutTable.RowBg = false
+    
         for i = 1, columnsCount do
             self.layoutTable:AddColumn("Track_" .. i, "WidthStretch")
         end
-
-        self.columnRow = self.layoutTable:AddRow()
-    end
     
-    local cellContainer = self.columnRow:AddCell()
-    return cellContainer
+    local columnRow = layoutTable:AddRow()
+    local trackContainers = {}
+    
+    for i = 1, columnsCount do
+        table.insert(trackContainers, columnRow:AddCell())
+    end
+    return trackContainers
 end
